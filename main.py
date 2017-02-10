@@ -37,11 +37,19 @@ def upload_anon():
 
 print("What would you like to do? \ninput i for gallery items\ninput u for upload")
 print("Input 'auth' to authorize your account for user uploads")
-input = input()
-if input == "i":
+user_input = input()
+if user_input == "i":
     gallery_check()
-if input == "auth":
-    webbrowser.open_new_tab("https://api.imgur.com/oauth2/authorize?client_id=16bb853579ca0a9&response_type=pin&state=gottem")
+if user_input == "auth":
+    authorization_url = client.get_auth_url('pin')
+    webbrowser.open_new_tab(authorization_url)
+    print('input pin')
+    pin = input()
+    #   PYTHON LET ME GET THE FUCKING PIN JESUS CHRIST
+    #   thank you
+    credentials = client.authorize('FUCK MY ASS', grant_type='pin')
+    print(credentials)
+    #client.set_user_auth(credentials['access_token'], credentials['refresh_token'])
     
 #testing -- under construction
 
