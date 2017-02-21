@@ -24,15 +24,48 @@ client_secret = '93425782251b67c7254c46869e6be8b3c2c03e7a'
 
 #Creating Client var
 client = ImgurClient(client_id, client_secret)
-#some anonymous functions
-def gallery_check():
-    items = client.gallery()
-    for item in items:
-        print(item.link)
 
-def upload_anon():
-    fpath = input("input filepath")
-    client.upload_from_path(fpath)
+
+
+
+#Anonymous class
+class Anon:
+    anon_actions = []
+
+    #Gallery check
+    anon_actions.append("gallery check")
+    def gallery_check(self):
+        items = client.gallery()
+        for item in items:
+            print(item.link)
+        self.anon_loop()
+
+    #Anon upload
+    anon_actions.append("anon upload")
+    def upload_anon(self):
+        fpath = input("input filepath")
+        client.upload_from_path(fpath)
+        self.anon_loop()
+
+    #Loop for the actions
+    def anon_loop(self):
+        print("\n\n\n")
+        for i in range(len(self.anon_actions)):
+            print(self.anon_actions[i])
+        anon_input = input("Input your action choice from the list above\n")
+
+        if anon_input == "gallery check":
+            self.gallery_check()
+        elif anon_input == "anon upload":
+            self.upload_anon()
+        elif anon_input == "quit":
+            runProgram(anon,auth2)
+        self.anon_loop()
+
+
+
+
+
     
 #the Authorization class
 #everything that uses a user auth comes from this
@@ -41,10 +74,12 @@ class Auth2:
     pin = ""
     access_token = ""
     refresh_token = ""
-    
+
+    auth_actions = []
     #This function opens a web page, and the user needs to log in
     #Once they log in and authorize the app, they get a pin
     #The pin needs to be pasted back into the shell
+    
     def getPin(self, client_id, client_secret):
         resp = "pin"
         state = "succ"
@@ -73,7 +108,16 @@ class Auth2:
         self.refresh_token = j['refresh_token']
         print ("Access Token: ",self.access_token,"\nRefresh Token: ",self.refresh_token)
 
+    #Authentication function
+    def authentication(self):
+        self.getPin(client_id, client_secret)
+        self.pinTokenExchange(client_id, client_secret, self.pin)
+
+
+
+    
     #This function allows an authenticated user to upload to their account from a url
+    auth_actions.append("URL Upload")
     def uploadFromURL(self, access_token):
         image_url = input("Input url of image you want to upload\n")
         image_title = input("Input title of image\n")
@@ -94,33 +138,45 @@ class Auth2:
 
         uploaded_url = j['data']['link']
         print("The uploaded image URL is: ", uploaded_url)
-    
-#making instance of Auth2
+
+
+    def auth_loop(self):
+        self.authentication()
+        print("\n\n\n")
+        for i in range(len(self.auth_actions)):
+            print(self.auth_actions[i])
+
+        auth_input = input("Input your action choice from the list above\n")
+
+        if auth_input == "URL Upload":
+            self.uploadFromURL()
+            self.auth_loop()
+        elif auth_input == "quit":
+            runProgram(anon,auth2)
+
+
+#making instances of classes
+anon = Anon()
 auth2 = Auth2()
 
-#initial input 
-print("What would you like to do? \ninput i for gallery items")
-print("Input 'auth' to authorize your account for user uploads")
-user_input = input()
-if user_input == "i":
-    gallery_check()
 
-if user_input == "auth":
-    auth2.getPin(client_id, client_secret)
-    auth2.pinTokenExchange(client_id, client_secret, pin)
-
-    #Past this point is authenticated user actions
+#initial input
+def runProgram(anon, auth2):
+    print("Welcome to Pymgus Lang Imgur client.")
     user_input = input("""
-    Your account is now authorized.\n
-    What would you like to do?\n
-    Type "url" to upload from a URL.\n
+    Input whether you want to do anonymous actions or user-based actions.\n
+    Type "anon" for anonymous actions\n
+    Type "auth" to authorize your Imgur account and do user-based actions\n
+    Input "quit" at any input to return to the beginning\n
     """)
-    if user_input == "url":
-        auth2.uploadFromURL(auth2.access_token)
 
+    if user_input == "anon":
+        anon.anon_loop()
 
+    if user_input == "auth":
+        auth2.auth_loop()
 
-
+runProgram(anon, auth2)
     
 
 
