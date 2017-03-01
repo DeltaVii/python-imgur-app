@@ -10,6 +10,7 @@
 
 #Importing API package
 from imgurpython import ImgurClient
+from imgurpython import *
 #Networking imports
 from pprint import pprint
 import requests
@@ -25,6 +26,8 @@ client_secret = '93425782251b67c7254c46869e6be8b3c2c03e7a'
 #Creating Client var
 client = ImgurClient(client_id, client_secret)
 
+##Testing Zone##
+
 
 
 
@@ -39,6 +42,21 @@ class Anon:
         for item in items:
             print(item.link)
         self.anon_loop()
+
+    #Better gallery check?
+    anon_actions.append("gallery check 2")
+    def gallery_check2(self):
+        section = input("Input hot, top or user")
+        sort = input("Input viral or time")
+        window = None
+        show_viral = None
+        if section == "top":
+            window = input("Input day, week, month, year or all")
+        if section == "user":
+            show_viral = input("Input true or false for viral images")
+        limit = input("Input limit for images, None for no limit")
+        client.gallery(section=section,sort=sort,window=window,show_viral=show_viral,limit=limit)
+    
 
     #Anon upload
     anon_actions.append("anon upload")
@@ -60,6 +78,8 @@ class Anon:
             self.upload_anon()
         elif anon_input == "quit":
             runProgram(anon,auth2)
+        elif anon_input == "gallery check 2":
+            self.gallery_check2()
         self.anon_loop()
 
 
@@ -112,6 +132,7 @@ class Auth2:
     def authentication(self):
         self.getPin(client_id, client_secret)
         self.pinTokenExchange(client_id, client_secret, self.pin)
+        self.auth_loop()
 
 
 
@@ -141,7 +162,6 @@ class Auth2:
 
 
     def auth_loop(self):
-        self.authentication()
         print("\n\n\n")
         for i in range(len(self.auth_actions)):
             print(self.auth_actions[i])
@@ -151,8 +171,23 @@ class Auth2:
         if auth_input == "URL Upload":
             self.uploadFromURL()
             self.auth_loop()
+        elif auth_input == "Get User":
+            self.get_user()
         elif auth_input == "quit":
             runProgram(anon,auth2)
+        else:
+            self.auth_loop()
+
+    auth_actions.append("Get User")
+    def get_user(self):
+        params = {"client_id" : client_id}
+        r = requests.get("https://api.imgur.com/3/account/DeltaViii", data=params)
+        print(r)
+        j = r.json
+        print(j)
+        client.get_account("me")
+        self.auth_loop()
+
 
 
 #making instances of classes
@@ -174,7 +209,7 @@ def runProgram(anon, auth2):
         anon.anon_loop()
 
     if user_input == "auth":
-        auth2.auth_loop()
+        auth2.authentication()
 
 runProgram(anon, auth2)
     
