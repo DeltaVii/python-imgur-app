@@ -13,7 +13,9 @@ class Anon:
     anon_actions = []
     
     def anon_loop(self):
-        anon_input = input(anon_actions, "Choose from the list above")
+        for i in len(range(self.anon_actions)):
+            print(self.anon_actions[i])
+        anon_input = input("Choose from the list above")
 
 class Auth:
     auth_actions = []
@@ -61,12 +63,17 @@ class Auth:
             if get_user_actions_input == "Get Albums":
                 result = user.get_albums(limit=None)
                 print(result)
-            if get_user_actions_input == "Get Comments":
+            elif get_user_actions_input == "Get Comments":
                 result = user.get_comments()
+                for i in range(len(result)):
+                    print(i, ") ",result[i].text, "\n", sep='')
+            elif get_user_actions_input == "Get Favorites":
+                result = user.get_favorites()
                 print(result)
     
     def auth_loop(self):
-        print(self.auth_actions)
+        for i in len(range(aelf.auth_actions)):
+            print(self.auth_actions[i])
         auth_input = input("Choose from the list above")
         if auth_input == "Get User":
             self.get_user()
