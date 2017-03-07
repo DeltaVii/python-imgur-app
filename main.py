@@ -1,217 +1,151 @@
-##############################
-##                          ##
-## Kelly Norris             ##
-##                          ##
-## Pymgus Lang Imgur Client ##
-##                          ##
-## Semester 2, 2017         ##
-##                          ##
-##############################
+#Testing file for the other python imgur library, PyImgur
 
-#Importing API package
-from imgurpython import ImgurClient
-from imgurpython import *
-#Networking imports
-from pprint import pprint
-import requests
-import json
+
+import pyimgur
 import webbrowser
-#Image handling imports (idk what for)
-import base64
 
-#Inputting App IDs
-client_id = '16bb853579ca0a9'
-client_secret = '93425782251b67c7254c46869e6be8b3c2c03e7a'
+CLIENT_ID = '16bb853579ca0a9'
+CLIENT_SECRET = '93425782251b67c7254c46869e6be8b3c2c03e7a'
 
-#Creating Client var
-client = ImgurClient(client_id, client_secret)
+client = pyimgur.Imgur(CLIENT_ID, CLIENT_SECRET)
 
-##Testing Zone##
-
-
-
-
-#Anonymous class
 class Anon:
     anon_actions = []
-
-    #Gallery check
-    anon_actions.append("gallery check")
-    def gallery_check(self):
-        items = client.gallery()
-        for item in items:
-            print(item.link)
-        self.anon_loop()
-
-    #Better gallery check?
-    anon_actions.append("gallery check 2")
-    def gallery_check2(self):
-        section = input("Input hot, top or user")
-        sort = input("Input viral or time")
-        window = None
-        show_viral = None
-        if section == "top":
-            window = input("Input day, week, month, year or all")
-        if section == "user":
-            show_viral = input("Input true or false for viral images")
-        limit = input("Input limit for images, None for no limit")
-        client.gallery(section=section,sort=sort,window=window,show_viral=show_viral,limit=limit)
     
-
-    #Anon upload
-    anon_actions.append("anon upload")
-    def upload_anon(self):
-        fpath = input("input filepath")
-        client.upload_from_path(fpath)
-        self.anon_loop()
-
-    #Loop for the actions
     def anon_loop(self):
-        print("\n\n\n")
-        for i in range(len(self.anon_actions)):
+        for i in len(range(self.anon_actions)):
             print(self.anon_actions[i])
-        anon_input = input("Input your action choice from the list above\n")
+        anon_input = input("Choose from the list above")
 
-        if anon_input == "gallery check":
-            self.gallery_check()
-        elif anon_input == "anon upload":
-            self.upload_anon()
-        elif anon_input == "quit":
-            runProgram(anon,auth2)
-        elif anon_input == "gallery check 2":
-            self.gallery_check2()
-        self.anon_loop()
-
-
-
-
-
-    
-#the Authorization class
-#everything that uses a user auth comes from this
-class Auth2:
-    #setting variables needed for authentication
-    pin = ""
-    access_token = ""
-    refresh_token = ""
-
+class Auth:
+    #making list of actions
     auth_actions = []
-    #This function opens a web page, and the user needs to log in
-    #Once they log in and authorize the app, they get a pin
-    #The pin needs to be pasted back into the shell
-    
-    def getPin(self, client_id, client_secret):
-        resp = "pin"
-        state = "succ"
-        authorization_url = client.get_auth_url('pin')
-        webbrowser.open_new_tab(authorization_url)
-        self.pin = input("paste pin here\n")
 
-    #This function exchanges the pin for an access and refresh token
-    def pinTokenExchange(self, client_id, client_secret, pin):
-        params ={"client_id" : client_id,
-                 "client_secret" : client_secret,
-                 "grant_type" : "pin",
-                 "pin" : self.pin}
+    #getting user authorizations
+    def authorization(self):
+        auth_url = client.authorization_url('pin')
+        webbrowser.open(auth_url)
+        pin = input("Paste pin here:")
 
-        url = r"https://api.imgur.com/oauth2/token/"
-        r = requests.post(url, data = params, verify = True)
+        client.exchange_pin(pin)
 
-        j = r.json()
-        print("The pinTokenExchange response:")
-        print(self.pin)
-        
-        #debug print
-        print(j)
-
-        self.access_token = j['access_token']
-        self.refresh_token = j['refresh_token']
-        print ("Access Token: ",self.access_token,"\nRefresh Token: ",self.refresh_token)
-
-    #Authentication function
-    def authentication(self):
-        self.getPin(client_id, client_secret)
-        self.pinTokenExchange(client_id, client_secret, self.pin)
         self.auth_loop()
 
-
-
-    
-    #This function allows an authenticated user to upload to their account from a url
-    auth_actions.append("URL Upload")
-    def uploadFromURL(self, access_token):
-        image_url = input("Input url of image you want to upload\n")
-        image_title = input("Input title of image\n")
-
-        headers = {"authorization":"Bearer {0}".format(access_token)}
-
-        upload_url = r'https://api.imgur.com/3/upload'
-
-        payload = {"image": image_url,
-                   "type": 'url',
-                   'title': image_title}
-
-        r = requests.post(upload_url, data=payload, headers=headers, verify=True)
-
-        j = r.json()
-        print("Uploader response:")
-        print(j)
-
-        uploaded_url = j['data']['link']
-        print("The uploaded image URL is: ", uploaded_url)
-
-
-    def auth_loop(self):
-        print("\n\n\n")
-        for i in range(len(self.auth_actions)):
-            print(self.auth_actions[i])
-
-        auth_input = input("Input your action choice from the list above\n")
-
-        if auth_input == "URL Upload":
-            self.uploadFromURL()
-            self.auth_loop()
-        elif auth_input == "Get User":
-            self.get_user()
-        elif auth_input == "quit":
-            runProgram(anon,auth2)
-        else:
-            self.auth_loop()
-
+    #the Get User function
+    #involves looking up users
     auth_actions.append("Get User")
     def get_user(self):
-        params = {"client_id" : client_id}
-        r = requests.get("https://api.imgur.com/3/account/DeltaViii", data=params)
-        print(r)
-        j = r.json
-        print(j)
-        client.get_account("me")
-        self.auth_loop()
+        #getting username input
+        username = input("Input username to get:")
+        if username == "back":
+            self.auth_loop()
+        #creates a User object with username
+        user = client.get_user(username)
+        print("usernmae is:",user.name)
+        print("Bio:",user.bio)
+        print("User ID:",user.id)
+        print("User Rep:",user.reputation)
+        
+        #asking for more actions
+        get_user_input = input("Would you like to do user actions? y/n:")
+        if get_user_input == "n":
+            self.auth_loop()
+        elif get_user_input == "y":
+            get_user_actions = []
+
+            #listing out actions
+            get_user_actions.append("Get Albums")
+            get_user_actions.append("Get Comments")
+            get_user_actions.append("Get Favorites")
+            get_user_actions.append("Get Gallery Favorites")
+            get_user_actions.append("Get Gallery Profile")
+            get_user_actions.append("Get Statistics")
+            get_user_actions.append("Get Images")
+            get_user_actions.append("Send Message")
+
+            for i in range(len(get_user_actions)):
+                print(get_user_actions[i])
 
 
+            #User actions input
+            get_user_actions_input = input("Choose from the above list:")
 
-#making instances of classes
-anon = Anon()
-auth2 = Auth2()
+            #If statements in reply
+            #Albums
+            if get_user_actions_input == "Get Albums":
+                result = user.get_albums(limit=None)
+                for i in range(len(result)):
+                    print(result[i].link)
+                self.auth_loop()
+            #Comments
+            elif get_user_actions_input == "Get Comments":
+                result = user.get_comments()
+                for i in range(len(result)):
+                    print(i, ") ",result[i].text, "\n", sep='')
+                self.auth_loop()
+            #Favorites
+            elif get_user_actions_input == "Get Favorites":
+                result = user.get_favorites()
+                for i in range(len(result)):
+                    print(result[i].link)
+                self.auth_loop()
+            #Gallery Favorites
+            elif get_user_actions_input == "Get Gallery Favorites":
+                result = user.get_gallery_favorites()
+                for i in range(len(result)):
+                    print(result[i].link)
+                self.auth_loop()
+            #Gallery Profile
+            elif get_user_actions_input == "Get Gallery Profile":
+                result = user.get_gallery_profile()
+                print(result)
+                self.auth_loop()
+            #Stats
+            elif get_user_actions_input == "Get Statistics":
+                result = user.get_statistics()
+                print(result)
+                self.auth_loop()
+            #Images
+            elif get_user_actions_input == "Get Images":
+                result = user.get_submissions()
+                for i in range(len(result)):
+                    print(result[i].link)
+                self.auth_loop()
+            #Message
+            elif get_user_actions_input == "Send Message":
+                body = input("Input body of message:")
+                subject = input("Input subject of message:")
+                send_message(body, subject, reply_to=None)
+                self.auth_loop()
 
-
-#initial input
-def runProgram(anon, auth2):
-    print("Welcome to Pymgus Lang Imgur client.")
-    user_input = input("""
-    Input whether you want to do anonymous actions or user-based actions.\n
-    Type "anon" for anonymous actions\n
-    Type "auth" to authorize your Imgur account and do user-based actions\n
-    Input "quit" at any input to return to the beginning\n
-    """)
-
-    if user_input == "anon":
-        anon.anon_loop()
-
-    if user_input == "auth":
-        auth2.authentication()
-
-runProgram(anon, auth2)
+            #go backs
+            elif get_user_actions_input == "back":
+                self.auth_loop()
+            else:
+                print("Input not understood")
+                self.get_user()
     
-
+    def auth_loop(self):
+        for i in range(len(self.auth_actions)):
+            print(self.auth_actions[i])
+        auth_input = input("Choose from the list above")
+        if auth_input == "Get User":
+            self.get_user()
+        #go back to the original input
+        elif auth_input == "back":
+            user_input = input("Anon or Auth?\n")
+            if user_input == "Anon":
+                anon.anon_loop
+            elif user_input == "Auth":
+                auth.authorization()
+        else:
+            auth_loop()
+        
+anon = Anon()
+auth = Auth()
+user_input = input("Anon or Auth?\n")
+if user_input == "Anon":
+    anon.anon_loop
+elif user_input == "Auth":
+    auth.authorization()
 
