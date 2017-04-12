@@ -101,9 +101,10 @@ Builder.load_string("""
     BoxLayout:
         AnonFunctions_Gallery3_Label:
             Label:
-                text:'Kivy can suck my dick'
+                text: root.updated_text
         Button:
             text:'Update because kivy is bad'
+            on_press: root.updateText()
             
 """)
 
@@ -121,11 +122,15 @@ class AnonFunctions_Gallery2(Screen):
     pass
 
 class AnonFunctions_Gallery3(Screen):
-    pass
+    updated_text = StringProperty()
+
+    def updateText(self):
+        result = 'end'
+        self.updated_text = result
+        print('updateText has fired')
     
 class AnonFunctions_Gallery3_Label(Widget):
-    def updateText(self):
-        self.Label.text = result
+    pass
     
 
 sm = ScreenManager(transition=NoTransition())
