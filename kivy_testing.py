@@ -9,6 +9,7 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.label import Label
 from kivy.uix.image import Image
 from kivy.uix.widget import Widget
+from kivy.uix.textinput import TextInput
 from kivy.lang import Builder
 #screen
 from kivy.uix.screenmanager import ScreenManager, Screen, NoTransition
@@ -27,7 +28,7 @@ client = pyimgur.Imgur(CLIENT_ID, CLIENT_SECRET)
 section = ''
 sort = ''
 result = ''
-
+result_list = []
 
 Builder.load_string("""
 <TitleScreen>:
@@ -68,7 +69,7 @@ Builder.load_string("""
         BoxLayout:
             Button:
                 text:'hot'
-                on_press: section='hot'
+                on_press: root.sectionHot()
                 on_press: root.manager.current = 'anon_gallery2'
             Button:
                 text:'top'
@@ -87,7 +88,7 @@ Builder.load_string("""
         BoxLayout:
             Button:
                 text:'viral'
-                on_press: sort='viral'
+                on_press: root.sortViral()
                 on_press: root.manager.current = 'anon_gallery3'
                 
             Button:
@@ -97,14 +98,15 @@ Builder.load_string("""
                 
 
 <AnonFunctions_Gallery3>:
-    
+    on_enter: root.updateText()
     BoxLayout:
-        AnonFunctions_Gallery3_Label:
-            Label:
-                text: root.updated_text
+        TextInput:
+            text: root.updated_text
+                
         Button:
-            text:'Update because kivy is bad'
+            text:'This button is no longer needed'
             on_press: root.updateText()
+            
             
 """)
 
@@ -116,18 +118,38 @@ class AnonFunctions_1(Screen):
     pass
 
 class AnonFunctions_Gallery1(Screen):
-    pass
+    def sectionHot(self):
+        section = "hot"
+        result_list.append(section)
+        print(result_list)
+        print(section)
 
 class AnonFunctions_Gallery2(Screen):
-    pass
+    def sortViral(self):
+        sort = "viral"
+        result_list.append(sort)
+        print(result_list)
+        print(sort)
 
 class AnonFunctions_Gallery3(Screen):
     updated_text = StringProperty()
 
     def updateText(self):
-        result = 'end'
-        self.updated_text = result
+        result = client.get_gallery(section = result_list[0], sort = result_list[1], limit = 20)
+        chunks = []
+        for i in range(len(result)):
+            link = result[i].link
+            chunks.append(link)
+            chunks.append("\n")
+        new_result = ''.join(chunks)
+        #self.updated_text = result
         print('updateText has fired')
+        print(result_list)
+        print(result)
+        print(new_result)
+        self.updated_text = new_result
+        if result == '':
+            print("Result did not update")
     
 class AnonFunctions_Gallery3_Label(Widget):
     pass
