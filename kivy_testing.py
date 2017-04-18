@@ -57,9 +57,14 @@ Builder.load_string("""
         orientation:'vertical'
         Label:
             text:'Anonymous Functions'
-        Button:
-            text:'Gallery Getter'
-            on_press: root.manager.current='anon_gallery1'
+
+        BoxLayout:
+            Button:
+                text:'Gallery Getter'
+                on_press: root.manager.current='anon_gallery1'
+            Button:
+                text:'Go Back'
+                on_press: root.manager.current='title'
 
 <AnonFunctions_Gallery1>:
     BoxLayout:
@@ -73,11 +78,11 @@ Builder.load_string("""
                 on_press: root.manager.current = 'anon_gallery2'
             Button:
                 text:'top'
-                on_press: section='top'
+                on_press: root.sectionTop()
                 on_press: root.manager.current = 'anon_gallery2'
             Button:
                 text:'user'
-                on_press: section='user'
+                on_press: root.sectionUser()
                 on_press: root.manager.current = 'anon_gallery2'
 
 <AnonFunctions_Gallery2>:
@@ -93,7 +98,7 @@ Builder.load_string("""
                 
             Button:
                 text:'time'
-                on_press: sort='time'
+                on_press: root.sortTime()
                 on_press: root.manager.current = 'anon_gallery3'
                 
 
@@ -104,8 +109,8 @@ Builder.load_string("""
             text: root.updated_text
                 
         Button:
-            text:'This button is no longer needed'
-            on_press: root.updateText()
+            text:'Go back'
+            on_press: root.manager.current = 'anon1'
             
             
 """)
@@ -118,9 +123,23 @@ class AnonFunctions_1(Screen):
     pass
 
 class AnonFunctions_Gallery1(Screen):
+    #functions for different section selections
     def sectionHot(self):
         section = "hot"
         result_list.append(section)
+        ##Delete for final
+        print(result_list)
+        print(section)
+    def sectionTop(self):
+        section = "top"
+        result_list.append(section)
+        ##Delete for final
+        print(result_list)
+        print(section)
+    def sectionUser(self):
+        section = "user"
+        result_list.append(section)
+        ##Delete for final
         print(result_list)
         print(section)
 
@@ -128,6 +147,13 @@ class AnonFunctions_Gallery2(Screen):
     def sortViral(self):
         sort = "viral"
         result_list.append(sort)
+        ##Delete for final
+        print(result_list)
+        print(sort)
+    def sortTime(self):
+        sort = "time"
+        result_list.append(sort)
+        ##Delete for final
         print(result_list)
         print(sort)
 

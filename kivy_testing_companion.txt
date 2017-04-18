@@ -1,0 +1,19 @@
+Because the kivy language for the client is contained within a string, I can't put comments onto it. This file will provide documentation for the kivy language within the program.
+
+TitleScreen
+This is the title screen for the client. From here the user chooses between 'anonymous functions' and 'authorized functions'.
+
+###Anonymous Functions###
+This is a group for functions that don't require an imgur login authentication to use. Currently the only one is a gallery getter, which pulls links from the imgur gallery.
+
+AnonFunctions_1
+This is the first screen, for choosing which function to use.
+
+AnonFunctions_Gallery1
+This screen is where the user chooses the section option for the gallery function. The choices are between hot, top, and 'user' which means user-submitted.
+
+AnonFunctions_Gallery2
+This screen is where the user chooses the sort option. 'viral' for their viral sorting, and 'time' for most recent within the selected section.
+
+AnonFunctions_Gallery3
+This screen contains the TextInput that the links are put into. It needs to be a TextInput so that the user can select the text and copy the link.
