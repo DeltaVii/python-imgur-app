@@ -50,9 +50,11 @@ Builder.load_string("""
                 text:'Authorized functions'
                 background_color:(1,1,1,1)
                 font_size:20
+                on_press: root.manager.current = 'auth_auth'
                 
                 
 <AnonFunctions_1>:
+    on_enter: root.clearVars()
     BoxLayout:
         orientation:'vertical'
         Label:
@@ -112,7 +114,23 @@ Builder.load_string("""
             text:'Go back'
             on_press: root.manager.current = 'anon1'
             
-            
+
+<Auth_1>:
+    BoxLayout:
+        orientation: 'vertical'
+        TextInput:
+            id: ti
+            multiline: 'false'
+            text: 'paste pin here, then press enter'
+            on_text_validate: root.auth(ti.text)
+        Button:
+            text: 'Click here to open window and log in to imgur'
+            on_press: root.open_window()
+
+        Button:
+            text: 'press me for auth because bleeehhh'
+            on_press: root.auth(ti.text)
+            on_press: root.manager.current = 'auth1'
 """)
 
 #Declaring screens
@@ -120,7 +138,10 @@ class TitleScreen(Screen):
     pass
 
 class AnonFunctions_1(Screen):
-    pass
+    def clearVars(self):
+        result_list = []
+        
+        
 
 class AnonFunctions_Gallery1(Screen):
     #functions for different section selections
@@ -176,9 +197,26 @@ class AnonFunctions_Gallery3(Screen):
         self.updated_text = new_result
         if result == '':
             print("Result did not update")
+        result = ''
+        del result_list[:]
     
-class AnonFunctions_Gallery3_Label(Widget):
+    
+
+class Auth_1(Screen):
+    def auth(self, ti):
+        client.exchange_pin(ti)
+        print('authorization has fired')
+
+    def open_window(self):
+        auth_url = client.authorization_url('pin')
+        webbrowser.open(auth_url)
+
+        
+class AuthFunctions_1(Screen):
     pass
+
+
+
     
 
 sm = ScreenManager(transition=NoTransition())
@@ -188,6 +226,8 @@ sm.add_widget(AnonFunctions_Gallery1(name='anon_gallery1'))
 sm.add_widget(AnonFunctions_Gallery2(name='anon_gallery2'))
 sm.add_widget(AnonFunctions_Gallery3(name='anon_gallery3'))
 
+sm.add_widget(Auth_1(name='auth_auth'))
+sm.add_widget(AuthFunctions_1(name='auth1'))
 
 
 

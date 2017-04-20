@@ -17,3 +17,6 @@ This screen is where the user chooses the sort option. 'viral' for their viral s
 
 AnonFunctions_Gallery3
 This screen contains the TextInput that the links are put into. It needs to be a TextInput so that the user can select the text and copy the link.
+
+Auth_1
+This is where the user will authenticate their imgur account with the client. They press a button that opens a browser window where they log in and get a pin. The pin is pasted into the TextInput, and then they press the other button to validate and move on to the next screen.
