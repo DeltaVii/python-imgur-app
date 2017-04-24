@@ -131,6 +131,26 @@ Builder.load_string("""
             text: 'press me for auth because bleeehhh'
             on_press: root.auth(ti.text)
             on_press: root.manager.current = 'auth1'
+
+<AuthFunctions_1>:
+    BoxLayout:
+        orientation: 'vertical'
+        Button:
+            text: 'Get User function'
+            on_press: root.manager.current = 'auth_getuser1'
+        Button:
+            text: 'Messenger function'
+            on_press: root.manager.current = 'auth_message1'
+
+<AuthFunctions_GetUser_1>:
+    Button:
+        text: 'go back'
+        on_press: root.manager.current = 'auth1'
+<AuthFunctions_Message_1>:
+    Button:
+        text: 'go back'
+        on_press: root.manager.current = 'auth1'
+
 """)
 
 #Declaring screens
@@ -215,6 +235,12 @@ class Auth_1(Screen):
 class AuthFunctions_1(Screen):
     pass
 
+class AuthFunctions_GetUser_1(Screen):
+    pass
+
+class AuthFunctions_Message_1(Screen):
+    pass
+
 
 
     
@@ -228,6 +254,8 @@ sm.add_widget(AnonFunctions_Gallery3(name='anon_gallery3'))
 
 sm.add_widget(Auth_1(name='auth_auth'))
 sm.add_widget(AuthFunctions_1(name='auth1'))
+sm.add_widget(AuthFunctions_GetUser_1(name='auth_getuser1'))
+sm.add_widget(AuthFunctions_Message_1(name='auth_message1'))
 
 
 
