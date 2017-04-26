@@ -30,6 +30,8 @@ sort = ''
 result = ''
 result_list = []
 
+get_user_choice = ''
+
 Builder.load_string("""
 <TitleScreen>:
     BoxLayout:
@@ -143,13 +145,66 @@ Builder.load_string("""
             on_press: root.manager.current = 'auth_message1'
 
 <AuthFunctions_GetUser_1>:
-    Button:
-        text: 'go back'
-        on_press: root.manager.current = 'auth1'
+    BoxLayout:
+        orientation: 'vertical'
+        Button:
+            text: 'go back'
+            on_press: root.manager.current = 'auth1'
+        TextInput:
+            text: 'enter a username'
+            id: usernameInput
+        Button:
+            text: 'click to enter username'
+            on_press: root.getUser(usernameInput.text)
+            on_press: root.manager.current = 'auth_getuser2'
+        Label:
+            text: root.usernameText
+
+<AuthFunctions_GetUser_2>:
+    BoxLayout:
+        orientation: 'vertical'
+        Button:
+            text: 'Go Back'
+            on_press: root.manager.current = 'auth_getuser1'
+        Button:
+            text:'Get Albums'
+            on_press: root.choice = 'album'
+        Button:
+            text:'Get Comments'
+            on_press: root.choice = 'comment'
+        Button:
+            text:'Get Favorites'
+            on_press: root.choice = 'favorite'
+        Button:
+            text:'Get Gallery Favorites'
+            on_press: root.choice = 'gallery favorite'
+        Button:
+            text:'Get Gallery Profile'
+            on_press: root.choice = 'gallery profile'
+        Button:
+            text:'Get Statistics'
+            on_press: root.choice = 'stats'
+        Button:
+            text:'Get Images'
+            on_press: root.choice = 'image'
+
+<AuthFunctions_GetUser_3>:
+    BoxLayout:
+        orientation: 'vertical'
+        Button:
+            text:'go back'
+            on_press: root.manager.current = 'auth_getuser2'
+        
+        
+        
+            
+        
 <AuthFunctions_Message_1>:
     Button:
         text: 'go back'
         on_press: root.manager.current = 'auth1'
+
+
 
 """)
 
@@ -200,6 +255,7 @@ class AnonFunctions_Gallery2(Screen):
 
 class AnonFunctions_Gallery3(Screen):
     updated_text = StringProperty()
+    
 
     def updateText(self):
         result = client.get_gallery(section = result_list[0], sort = result_list[1], limit = 20)
@@ -236,6 +292,20 @@ class AuthFunctions_1(Screen):
     pass
 
 class AuthFunctions_GetUser_1(Screen):
+    usernameText = StringProperty()
+    usernameText = "aaaah"
+    
+    def getUser(self, username):
+        user = client.get_user(username)
+        print("username is:", user.name)
+        self.usernameText = user.name
+        print(self.usernameText)
+        
+
+class AuthFunctions_GetUser_2(Screen):
+    choice = ''
+
+class AuthFunctions_GetUser_3(Screen):
     pass
 
 class AuthFunctions_Message_1(Screen):
@@ -255,6 +325,8 @@ sm.add_widget(AnonFunctions_Gallery3(name='anon_gallery3'))
 sm.add_widget(Auth_1(name='auth_auth'))
 sm.add_widget(AuthFunctions_1(name='auth1'))
 sm.add_widget(AuthFunctions_GetUser_1(name='auth_getuser1'))
+sm.add_widget(AuthFunctions_GetUser_2(name='auth_getuser2'))
+sm.add_widget(AuthFunctions_GetUser_3(name='auth_getuser3'))
 sm.add_widget(AuthFunctions_Message_1(name='auth_message1'))
 
 
