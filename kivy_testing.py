@@ -31,6 +31,12 @@ result = ''
 result_list = []
 
 get_user_choice = ''
+global username
+username = ''
+global imgurUser
+imgurUser = ''
+global choice
+choice = ''
 
 Builder.load_string("""
 <TitleScreen>:
@@ -168,29 +174,44 @@ Builder.load_string("""
             on_press: root.manager.current = 'auth_getuser1'
         Button:
             text:'Get Albums'
-            on_press: root.choice = 'album'
+            on_press: root.getChoice('album')
+            on_press: root.manager.current = 'auth_getuser3'
         Button:
             text:'Get Comments'
-            on_press: root.choice = 'comment'
+            on_press: root.getChoice('comment')
+            on_press: root.manager.current = 'auth_getuser3'
         Button:
             text:'Get Favorites'
-            on_press: root.choice = 'favorite'
+            on_press: root.getChoice('favs')
+            on_press: root.manager.current = 'auth_getuser3'
         Button:
             text:'Get Gallery Favorites'
-            on_press: root.choice = 'gallery favorite'
+            on_press: root.getChoice('gallery favs')
+            on_press: root.manager.current = 'auth_getuser3'
         Button:
             text:'Get Gallery Profile'
-            on_press: root.choice = 'gallery profile'
+            on_press: root.getChoice('gallery profile')
+            on_press: root.manager.current = 'auth_getuser3'
         Button:
             text:'Get Statistics'
-            on_press: root.choice = 'stats'
+            on_press: root.getChoice('stats')
+            on_press: root.manager.current = 'auth_getuser3'
         Button:
             text:'Get Images'
-            on_press: root.choice = 'image'
+            on_press: root.getChoice('image')
+            on_press: root.manager.current = 'auth_getuser3'
 
 <AuthFunctions_GetUser_3>:
+    
     BoxLayout:
         orientation: 'vertical'
+        TextInput:
+            text: root.choiceText
+            id:choiceTextWindow
+        Button:
+            text:'click me to update'
+            on_press: root.showChoice()
+        
         Button:
             text:'go back'
             on_press: root.manager.current = 'auth_getuser2'
@@ -294,19 +315,44 @@ class AuthFunctions_1(Screen):
 class AuthFunctions_GetUser_1(Screen):
     usernameText = StringProperty()
     usernameText = "aaaah"
+    imgurUser = ''
     
-    def getUser(self, username):
-        user = client.get_user(username)
-        print("username is:", user.name)
-        self.usernameText = user.name
+    def getUser(self, username_input):
+        username = username_input
+        print(username)
+        self.imgurUser = client.get_user(username)
+        print("username is:", self.imgurUser.name)
+        print(self.imgurUser)
+        self.usernameText = self.imgurUser.name
         print(self.usernameText)
         
 
 class AuthFunctions_GetUser_2(Screen):
-    choice = ''
+
+    def getChoice(self, choice_input):
+        print(imgurUser)
+        choice = choice_input
+        print(choice)
+        
 
 class AuthFunctions_GetUser_3(Screen):
-    pass
+    imgurUser = AuthFunctions_GetUser_1.imgurUser
+    
+        
+    resultList = []
+    choiceText = StringProperty()
+    def showChoice(self):
+        print("showChoice has fired")
+        print(choice)
+        print(self.imgurUser)
+        print(self.imgurUser.name)
+        if choice == 'album':
+            result = imgurUser.get_albums(limit=20)
+            for i in range(len(result)):
+                resultList.append(result[i].link)
+            resultJoin = string.join(resultList)
+            print(resultJoin)
+            self.choiceText = resultJoin
 
 class AuthFunctions_Message_1(Screen):
     pass
