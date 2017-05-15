@@ -1,11 +1,24 @@
-from kivy.app import App
-from kivy.uix.button import Button
+############################
+#                          #
+# Kelly Norris             #
+#                          #
+# Spring 2017              #
+#                          #
+# Programming 2            #
+#                          #
+# Pymgus Lang Imgur Client #
+#                          #
+############################
 
-#Kivy functions#
+
+##Kivy functions##
+#app
+from kivy.app import App
 #layouts
 from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.boxlayout import BoxLayout
 #uix
+from kivy.uix.button import Button
 from kivy.uix.label import Label
 from kivy.uix.image import Image
 from kivy.uix.widget import Widget
@@ -31,13 +44,12 @@ result = ''
 result_list = []
 
 get_user_choice = ''
-global username
 username = ''
-global imgurUser
 imgurUser = ''
-global choice
 choice = ''
 
+#This string block configures the Kivy layout
+#Refer to "Kivy_string_companion.txt" to see documentation
 Builder.load_string("""
 <TitleScreen>:
     BoxLayout:
@@ -61,6 +73,7 @@ Builder.load_string("""
                 on_press: root.manager.current = 'auth_auth'
                 
                 
+                
 <AnonFunctions_1>:
     on_enter: root.clearVars()
     BoxLayout:
@@ -75,6 +88,7 @@ Builder.load_string("""
             Button:
                 text:'Go Back'
                 on_press: root.manager.current='title'
+                
 
 <AnonFunctions_Gallery1>:
     BoxLayout:
@@ -153,87 +167,45 @@ Builder.load_string("""
 <AuthFunctions_GetUser_1>:
     BoxLayout:
         orientation: 'vertical'
-        Button:
-            text: 'go back'
-            on_press: root.manager.current = 'auth1'
-        TextInput:
-            text: 'enter a username'
-            id: usernameInput
-        Button:
-            text: 'click to enter username'
-            on_press: root.getUser(usernameInput.text)
-            on_press: root.manager.current = 'auth_getuser2'
-        Label:
-            text: root.usernameText
-
-<AuthFunctions_GetUser_2>:
-    BoxLayout:
-        orientation: 'vertical'
-        Button:
-            text: 'Go Back'
-            on_press: root.manager.current = 'auth_getuser1'
-        Button:
-            text:'Get Albums'
-            on_press: root.getChoice('album')
-            on_press: root.manager.current = 'auth_getuser3'
-        Button:
-            text:'Get Comments'
-            on_press: root.getChoice('comment')
-            on_press: root.manager.current = 'auth_getuser3'
-        Button:
-            text:'Get Favorites'
-            on_press: root.getChoice('favs')
-            on_press: root.manager.current = 'auth_getuser3'
-        Button:
-            text:'Get Gallery Favorites'
-            on_press: root.getChoice('gallery favs')
-            on_press: root.manager.current = 'auth_getuser3'
-        Button:
-            text:'Get Gallery Profile'
-            on_press: root.getChoice('gallery profile')
-            on_press: root.manager.current = 'auth_getuser3'
-        Button:
-            text:'Get Statistics'
-            on_press: root.getChoice('stats')
-            on_press: root.manager.current = 'auth_getuser3'
-        Button:
-            text:'Get Images'
-            on_press: root.getChoice('image')
-            on_press: root.manager.current = 'auth_getuser3'
-
-<AuthFunctions_GetUser_3>:
-    
-    BoxLayout:
-        orientation: 'vertical'
-        TextInput:
-            text: root.choiceText
-            id:choiceTextWindow
-        Button:
-            text:'click me to update'
-            on_press: root.showChoice()
-        
-        Button:
-            text:'go back'
-            on_press: root.manager.current = 'auth_getuser2'
-        
-        
-        
-            
-        
-<AuthFunctions_Message_1>:
-    Button:
-        text: 'go back'
-        on_press: root.manager.current = 'auth1'
+        BoxLayout:
+            BoxLayout:
+                orientation:'vertical'
+                Button:
+                    text: 'go back'
+                    on_press: root.manager.current = 'auth1'
+                TextInput:
+                    text: 'enter a username'
+                    id: usernameInput
+                Button:
+                    text: 'click to enter username'
+                    on_press: root.getUser(usernameInput.text)
+                    
+                Label:
+                    text: root.usernameText
+            BoxLayout:
+                TextInput:
+                    text:'enter choice: images, comments, favorites'
+                    id:choiceInput
+                Button:
+                    text:'Click to enter choice'
+                    on_press: root.getChoice(choiceInput.text)
+        BoxLayout:
+            TextInput:
+                id:pukeZone
+                text:root.vom
 
 
 
 """)
 
-#Declaring screens
+##Screen Classes##
+#In Kivy, each new screen has it's own class.
 class TitleScreen(Screen):
     pass
 
+
 class AnonFunctions_1(Screen):
+    #For multiple runs of the gallery getter function, the vars need to be cleared
     def clearVars(self):
         result_list = []
         
@@ -244,40 +216,25 @@ class AnonFunctions_Gallery1(Screen):
     def sectionHot(self):
         section = "hot"
         result_list.append(section)
-        ##Delete for final
-        print(result_list)
-        print(section)
     def sectionTop(self):
         section = "top"
         result_list.append(section)
-        ##Delete for final
-        print(result_list)
-        print(section)
     def sectionUser(self):
         section = "user"
         result_list.append(section)
-        ##Delete for final
-        print(result_list)
-        print(section)
 
 class AnonFunctions_Gallery2(Screen):
     def sortViral(self):
         sort = "viral"
         result_list.append(sort)
-        ##Delete for final
-        print(result_list)
-        print(sort)
     def sortTime(self):
         sort = "time"
         result_list.append(sort)
-        ##Delete for final
-        print(result_list)
-        print(sort)
 
 class AnonFunctions_Gallery3(Screen):
     updated_text = StringProperty()
     
-
+    #Changes the text on the screen to see the results of the search
     def updateText(self):
         result = client.get_gallery(section = result_list[0], sort = result_list[1], limit = 20)
         chunks = []
@@ -286,7 +243,6 @@ class AnonFunctions_Gallery3(Screen):
             chunks.append(link)
             chunks.append("\n")
         new_result = ''.join(chunks)
-        #self.updated_text = result
         print('updateText has fired')
         print(result_list)
         print(result)
@@ -298,8 +254,10 @@ class AnonFunctions_Gallery3(Screen):
         del result_list[:]
     
     
-
+#User goes through imgur authorization on this screen
+#Opens a window in default browser to log in and get pin
 class Auth_1(Screen):
+    
     def auth(self, ti):
         client.exchange_pin(ti)
         print('authorization has fired')
@@ -312,12 +270,18 @@ class Auth_1(Screen):
 class AuthFunctions_1(Screen):
     pass
 
+#Get User function
+#This function is used to get info about a user
+#Can only grab their favorites, comments, and submitted objects
 class AuthFunctions_GetUser_1(Screen):
+    #setting vars to use
     usernameText = StringProperty()
-    usernameText = "aaaah"
+    vom = StringProperty()
     imgurUser = ''
-    
+
+    #This function gets the inputted text and turns it into a User object
     def getUser(self, username_input):
+        
         username = username_input
         print(username)
         self.imgurUser = client.get_user(username)
@@ -325,42 +289,46 @@ class AuthFunctions_GetUser_1(Screen):
         print(self.imgurUser)
         self.usernameText = self.imgurUser.name
         print(self.usernameText)
-        
 
-class AuthFunctions_GetUser_2(Screen):
-
+    #Gets user's choice as to what to search
     def getChoice(self, choice_input):
-        print(imgurUser)
         choice = choice_input
         print(choice)
-        
-
-class AuthFunctions_GetUser_3(Screen):
-    imgurUser = AuthFunctions_GetUser_1.imgurUser
-    
-        
-    resultList = []
-    choiceText = StringProperty()
-    def showChoice(self):
-        print("showChoice has fired")
-        print(choice)
         print(self.imgurUser)
-        print(self.imgurUser.name)
-        if choice == 'album':
-            result = imgurUser.get_albums(limit=20)
+        chunks = []
+            
+        if choice == "favorites":
+            result = self.imgurUser.get_favorites()
             for i in range(len(result)):
-                resultList.append(result[i].link)
-            resultJoin = string.join(resultList)
-            print(resultJoin)
-            self.choiceText = resultJoin
-
-class AuthFunctions_Message_1(Screen):
-    pass
-
-
+                link = result[i].link
+                chunks.append(link)
+                chunks.append("\n")
+            new_result = ''.join(chunks)
+            print(new_result)
+            self.vom = new_result
+        if choice == "images":
+            result = self.imgurUser.get_submissions()
+            for i in range(len(result)):
+                link = result[i].link
+                chunks.append(link)
+                chunks.append("\n")
+            new_result = ''.join(chunks)
+            print(new_result)
+            self.vom = new_result
+        if choice == "comments":
+            result = self.imgurUser.get_comments()
+            for i in range(len(result)):
+                link = result[i].permalink
+                chunks.append(link)
+                chunks.append("\n")
+            new_result = ''.join(chunks)
+            print(new_result)
+            self.vom = new_result
 
     
 
+
+#Adding the screens to the screen manager
 sm = ScreenManager(transition=NoTransition())
 sm.add_widget(TitleScreen(name='title'))
 sm.add_widget(AnonFunctions_1(name='anon1'))
@@ -371,20 +339,13 @@ sm.add_widget(AnonFunctions_Gallery3(name='anon_gallery3'))
 sm.add_widget(Auth_1(name='auth_auth'))
 sm.add_widget(AuthFunctions_1(name='auth1'))
 sm.add_widget(AuthFunctions_GetUser_1(name='auth_getuser1'))
-sm.add_widget(AuthFunctions_GetUser_2(name='auth_getuser2'))
-sm.add_widget(AuthFunctions_GetUser_3(name='auth_getuser3'))
-sm.add_widget(AuthFunctions_Message_1(name='auth_message1'))
 
 
-
-
-
-
+#Creating the App to be run
 class TestApp(App):
     def build(self):
         return sm
         
-
-
+#Running the App
 if __name__=="__main__":
     TestApp().run()
