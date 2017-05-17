@@ -161,8 +161,8 @@ Builder.load_string("""
             text: 'Get User function'
             on_press: root.manager.current = 'auth_getuser1'
         Button:
-            text: 'Messenger function'
-            on_press: root.manager.current = 'auth_message1'
+            text: 'Go back (Will need to re-auth)'
+            on_press: root.manager.current = 'auth_auth'
 
 <AuthFunctions_GetUser_1>:
     BoxLayout:

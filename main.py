@@ -1,241 +1,351 @@
-#Testing file for the other python imgur library, PyImgur
+############################
+#                          #
+# Kelly Norris             #
+#                          #
+# Spring 2017              #
+#                          #
+# Programming 2            #
+#                          #
+# Pymgus Lang Imgur Client #
+#                          #
+############################
 
 
+##Kivy functions##
+#app
+from kivy.app import App
+#layouts
+from kivy.uix.floatlayout import FloatLayout
+from kivy.uix.boxlayout import BoxLayout
+#uix
+from kivy.uix.button import Button
+from kivy.uix.label import Label
+from kivy.uix.image import Image
+from kivy.uix.widget import Widget
+from kivy.uix.textinput import TextInput
+from kivy.lang import Builder
+#screen
+from kivy.uix.screenmanager import ScreenManager, Screen, NoTransition
+from kivy.properties import StringProperty
+
+#imgur imports
 import pyimgur
 import webbrowser
-
+#imgur vars
 CLIENT_ID = '16bb853579ca0a9'
 CLIENT_SECRET = '93425782251b67c7254c46869e6be8b3c2c03e7a'
-
 client = pyimgur.Imgur(CLIENT_ID, CLIENT_SECRET)
 
-class Anon:
-    anon_actions = []
-    
-    
-    #Gallery lister
-    anon_actions.append("Gallery Viewer")
-    def anon_gallery(self):
-        #Getting preferences for section
-        section = input("Input 'hot', 'top', or 'user':").lower()
-        #making sure the input works
-        if section != "hot" and section != "top" and section != "user":
-            print("Input not understood, defaulting to 'hot'")
-            section = "hot"
-        #Getting preferences for sorting
-        sort = input("Input 'viral' or 'time':").lower()
-        #making sure the input works
-        if sort != "viral" and sort != "time":
-            print("Input not understood, defaulting to 'viral'")
-            sort = 'viral'
 
-        #creating result variable from preferences
-        result = client.get_gallery(section = section, sort = sort, limit=100)
-        #printing result with number list
-        for i in range(len(result)):
-            print(i+1, ")", end='', sep='')
-            print(result[i].link)
-        #Asking for link opening
-        link_get_bool = input("Want to open any link? y/n:")
-        if link_get_bool == "y":
-            #making a while loop for opening multiple links
-            get_links = True
-            while get_links == True:
-                #Getting input of the number for the link
-                link_get_number = input("Input the number that you want: ")
-                #making input an integer
-                int(link_get_number)
-                #Opening with webbrowser
-                #result list; index number is the input minus 1's link object
-                #.link makes sure to get a link and not the album/image object
-                webbrowser.open(result[int(link_get_number) - 1].link)
+#declaring function variables
+section = ''
+sort = ''
+result = ''
+result_list = []
 
-                #Asking for a repeat
-                link_get_repeat = input("Would you like to open another? y/n: ")
-                if link_get_repeat == "y".lower():
-                    pass
-                elif link_get_repeat == "n".lower():
-                    get_links = False
-                else:
-                    print("Input not understood, returning to anon_loop")
-                    self.anon_loop()
-            #ending link get loop
-            self.anon_loop()
+get_user_choice = ''
+username = ''
+imgurUser = ''
+choice = ''
+
+#This string block configures the Kivy layout
+#Refer to "Kivy_string_companion.txt" to see documentation
+Builder.load_string("""
+<TitleScreen>:
+    BoxLayout:
+        orientation:'vertical'
+        Image:
+            source:'img/imgurlogo.png'
+            size_hint_y:'.5'
             
-        #ending whole loop
-        elif link_get_bool == "n":
-            self.anon_loop()
-        else:
-            self.anon_loop()
-    #### End of Gallery Getter ####
-
-    #Anon loop for anonymous actions
-    def anon_loop(self):
-        #Printing list of actions with numbers
-        for i in range(len(self.anon_actions)):
-            print(i+1,")", end='', sep='')
-            print(self.anon_actions[i])
-        #Getting user input for anon action
-        anon_input = input("Choose from the list above: ")
-        #Gallery  Viewer
-        if anon_input =="Gallery Viewer".lower() or anon_input == "1":
-            self.anon_gallery()
             
-        #goback option
-        elif anon_input == "back":
-            user_input = input("Anon or Auth?\n").lower()
-            if user_input == "anon":
-                anon.anon_loop
-            elif user_input == "auth":
-                auth.authorization()
-        else:
-            self.anon_loop()
+        BoxLayout:
+            Button:
+                text:'Anonymous functions'
+                background_color:(1,1,1,1)
+                font_size:20
+                on_press: root.manager.current = 'anon1'
+                    
+            Button:
+                text:'Authorized functions'
+                background_color:(1,1,1,1)
+                font_size:20
+                on_press: root.manager.current = 'auth_auth'
+                
+                
+                
+<AnonFunctions_1>:
+    on_enter: root.clearVars()
+    BoxLayout:
+        orientation:'vertical'
+        Label:
+            text:'Anonymous Functions'
+
+        BoxLayout:
+            Button:
+                text:'Gallery Getter'
+                on_press: root.manager.current='anon_gallery1'
+            Button:
+                text:'Go Back'
+                on_press: root.manager.current='title'
+                
+
+<AnonFunctions_Gallery1>:
+    BoxLayout:
+        orientation:'vertical'
+        Label:
+            text:'Choose a section'
+        BoxLayout:
+            Button:
+                text:'hot'
+                on_press: root.sectionHot()
+                on_press: root.manager.current = 'anon_gallery2'
+            Button:
+                text:'top'
+                on_press: root.sectionTop()
+                on_press: root.manager.current = 'anon_gallery2'
+            Button:
+                text:'user'
+                on_press: root.sectionUser()
+                on_press: root.manager.current = 'anon_gallery2'
+
+<AnonFunctions_Gallery2>:
+    BoxLayout:
+        orientation:'vertical'
+        Label:
+            text:'Choose a sort option'
+        BoxLayout:
+            Button:
+                text:'viral'
+                on_press: root.sortViral()
+                on_press: root.manager.current = 'anon_gallery3'
+                
+            Button:
+                text:'time'
+                on_press: root.sortTime()
+                on_press: root.manager.current = 'anon_gallery3'
+                
+
+<AnonFunctions_Gallery3>:
+    on_enter: root.updateText()
+    BoxLayout:
+        TextInput:
+            text: root.updated_text
+                
+        Button:
+            text:'Go back'
+            on_press: root.manager.current = 'anon1'
+            
+
+<Auth_1>:
+    BoxLayout:
+        orientation: 'vertical'
+        TextInput:
+            id: ti
+            multiline: 'false'
+            text: 'paste pin here, then press enter'
+            on_text_validate: root.auth(ti.text)
+        Button:
+            text: 'Click here to open window and log in to imgur'
+            on_press: root.open_window()
+
+        Button:
+            text: 'press me for auth because bleeehhh'
+            on_press: root.auth(ti.text)
+            on_press: root.manager.current = 'auth1'
+
+<AuthFunctions_1>:
+    BoxLayout:
+        orientation: 'vertical'
+        Button:
+            text: 'Get User function'
+            on_press: root.manager.current = 'auth_getuser1'
+        Button:
+            text: 'Messenger function'
+            on_press: root.manager.current = 'auth_message1'
+
+<AuthFunctions_GetUser_1>:
+    BoxLayout:
+        orientation: 'vertical'
+        BoxLayout:
+            BoxLayout:
+                orientation:'vertical'
+                Button:
+                    text: 'go back'
+                    on_press: root.manager.current = 'auth1'
+                TextInput:
+                    text: 'enter a username'
+                    id: usernameInput
+                Button:
+                    text: 'click to enter username'
+                    on_press: root.getUser(usernameInput.text)
+                    
+                Label:
+                    text: root.usernameText
+            BoxLayout:
+                TextInput:
+                    text:'enter choice: images, comments, favorites'
+                    id:choiceInput
+                Button:
+                    text:'Click to enter choice'
+                    on_press: root.getChoice(choiceInput.text)
+        BoxLayout:
+            TextInput:
+                id:pukeZone
+                text:root.vom
+
+
+
+""")
+
+##Screen Classes##
+#In Kivy, each new screen has it's own class.
+class TitleScreen(Screen):
+    pass
+
+
+class AnonFunctions_1(Screen):
+    #For multiple runs of the gallery getter function, the vars need to be cleared
+    def clearVars(self):
+        result_list = []
         
-class Auth:
-    #making list of actions
-    auth_actions = []
+        
 
-    #getting user authorizations
-    def authorization(self):
+class AnonFunctions_Gallery1(Screen):
+    #functions for different section selections
+    def sectionHot(self):
+        section = "hot"
+        result_list.append(section)
+    def sectionTop(self):
+        section = "top"
+        result_list.append(section)
+    def sectionUser(self):
+        section = "user"
+        result_list.append(section)
+
+class AnonFunctions_Gallery2(Screen):
+    def sortViral(self):
+        sort = "viral"
+        result_list.append(sort)
+    def sortTime(self):
+        sort = "time"
+        result_list.append(sort)
+
+class AnonFunctions_Gallery3(Screen):
+    updated_text = StringProperty()
+    
+    #Changes the text on the screen to see the results of the search
+    def updateText(self):
+        result = client.get_gallery(section = result_list[0], sort = result_list[1], limit = 20)
+        chunks = []
+        for i in range(len(result)):
+            link = result[i].link
+            chunks.append(link)
+            chunks.append("\n")
+        new_result = ''.join(chunks)
+        print('updateText has fired')
+        print(result_list)
+        print(result)
+        print(new_result)
+        self.updated_text = new_result
+        if result == '':
+            print("Result did not update")
+        result = ''
+        del result_list[:]
+    
+    
+#User goes through imgur authorization on this screen
+#Opens a window in default browser to log in and get pin
+class Auth_1(Screen):
+    
+    def auth(self, ti):
+        client.exchange_pin(ti)
+        print('authorization has fired')
+
+    def open_window(self):
         auth_url = client.authorization_url('pin')
         webbrowser.open(auth_url)
-        pin = input("Paste pin here:")
 
-        client.exchange_pin(pin)
-
-        self.auth_loop()
-
-    #the Get User function
-    #involves looking up users
-    auth_actions.append("Get User")
-    def get_user(self):
-        #getting username input
-        username = input("Input username to get:")
-        if username == "back":
-            self.auth_loop()
-        #creates a User object with username
-        user = client.get_user(username)
-        print("usernmae is:",user.name)
-        print("Bio:",user.bio)
-        print("User ID:",user.id)
-        print("User Rep:",user.reputation)
         
-        #asking for more actions
-        get_user_input = input("Would you like to do user actions? y/n:")
-        if get_user_input == "n":
-            self.auth_loop()
-        elif get_user_input == "y":
-            get_user_actions = []
+class AuthFunctions_1(Screen):
+    pass
 
-            #listing out actions
-            get_user_actions.append("Get Albums")
-            get_user_actions.append("Get Comments")
-            get_user_actions.append("Get Favorites")
-            get_user_actions.append("Get Gallery Favorites")
-            get_user_actions.append("Get Gallery Profile")
-            get_user_actions.append("Get Statistics")
-            get_user_actions.append("Get Images")
-            get_user_actions.append("Send Message")
+#Get User function
+#This function is used to get info about a user
+#Can only grab their favorites, comments, and submitted objects
+class AuthFunctions_GetUser_1(Screen):
+    #setting vars to use
+    usernameText = StringProperty()
+    vom = StringProperty()
+    imgurUser = ''
 
-            for i in range(len(get_user_actions)):
-                print(get_user_actions[i])
+    #This function gets the inputted text and turns it into a User object
+    def getUser(self, username_input):
+        
+        username = username_input
+        print(username)
+        self.imgurUser = client.get_user(username)
+        print("username is:", self.imgurUser.name)
+        print(self.imgurUser)
+        self.usernameText = self.imgurUser.name
+        print(self.usernameText)
 
+    #Gets user's choice as to what to search
+    def getChoice(self, choice_input):
+        choice = choice_input
+        print(choice)
+        print(self.imgurUser)
+        chunks = []
+            
+        if choice == "favorites":
+            result = self.imgurUser.get_favorites()
+            for i in range(len(result)):
+                link = result[i].link
+                chunks.append(link)
+                chunks.append("\n")
+            new_result = ''.join(chunks)
+            print(new_result)
+            self.vom = new_result
+        if choice == "images":
+            result = self.imgurUser.get_submissions()
+            for i in range(len(result)):
+                link = result[i].link
+                chunks.append(link)
+                chunks.append("\n")
+            new_result = ''.join(chunks)
+            print(new_result)
+            self.vom = new_result
+        if choice == "comments":
+            result = self.imgurUser.get_comments()
+            for i in range(len(result)):
+                link = result[i].permalink
+                chunks.append(link)
+                chunks.append("\n")
+            new_result = ''.join(chunks)
+            print(new_result)
+            self.vom = new_result
 
-            #User actions input
-            get_user_actions_input = input("Choose from the above list:")
-
-            #If statements in reply
-            #Albums
-            if get_user_actions_input == "Get Albums":
-                result = user.get_albums(limit=None)
-                for i in range(len(result)):
-                    print(result[i].link)
-                self.auth_loop()
-            #Comments
-            elif get_user_actions_input == "Get Comments":
-                result = user.get_comments()
-                for i in range(len(result)):
-                    print(i, ") ",result[i].text, "\n", sep='')
-                self.auth_loop()
-            #Favorites
-            elif get_user_actions_input == "Get Favorites":
-                result = user.get_favorites()
-                for i in range(len(result)):
-                    print(result[i].link)
-                self.auth_loop()
-            #Gallery Favorites
-            elif get_user_actions_input == "Get Gallery Favorites":
-                result = user.get_gallery_favorites()
-                for i in range(len(result)):
-                    print(result[i].link)
-                self.auth_loop()
-            #Gallery Profile
-            elif get_user_actions_input == "Get Gallery Profile":
-                result = user.get_gallery_profile()
-                print(result)
-                self.auth_loop()
-            #Stats
-            elif get_user_actions_input == "Get Statistics":
-                result = user.get_statistics()
-                print(result)
-                self.auth_loop()
-            #Images
-            elif get_user_actions_input == "Get Images":
-                result = user.get_submissions()
-                for i in range(len(result)):
-                    print(result[i].link)
-                self.auth_loop()
-            #Message
-            elif get_user_actions_input == "Send Message":
-                body = input("Input body of message:")
-                subject = input("Input subject of message:")
-                send_message(body, subject, reply_to=None)
-                self.auth_loop()
-
-            #go backs
-            elif get_user_actions_input == "back":
-                self.auth_loop()
-            else:
-                print("Input not understood")
-                self.get_user()
-
-
-    auth_actions.append("Message User")
-    def message(self):
-        #getting username input
-        username = input("Input username to get:")
-        if username == "back":
-            self.auth_loop()
-        #creates a User object with username
-        user = client.get_user(username)
-        body = input("Input the body of your message: ")
-        subject = input("Input the subject of your message: ")
-
-        user.send_message(body,subject,reply_to=None)
-        self.auth_loop()
     
-    def auth_loop(self):
-        for i in range(len(self.auth_actions)):
-            print(self.auth_actions[i])
-        auth_input = input("Choose from the list above")
-        if auth_input == "Get User":
-            self.get_user()
-        #go back to the original input
-        elif auth_input == "back":
-            user_input = input("Anon or Auth?\n").lower()
-            if user_input == "anon":
-                anon.anon_loop
-            elif user_input == "auth":
-                auth.authorization()
-        else:
-            auth_loop()
 
-#creating instances of the classes
-anon = Anon()
-auth = Auth()
-user_input = input("Anon or Auth?\n").lower()
-if user_input == "anon":
-    anon.anon_loop()
-elif user_input == "auth":
-    auth.authorization()
 
+#Adding the screens to the screen manager
+sm = ScreenManager(transition=NoTransition())
+sm.add_widget(TitleScreen(name='title'))
+sm.add_widget(AnonFunctions_1(name='anon1'))
+sm.add_widget(AnonFunctions_Gallery1(name='anon_gallery1'))
+sm.add_widget(AnonFunctions_Gallery2(name='anon_gallery2'))
+sm.add_widget(AnonFunctions_Gallery3(name='anon_gallery3'))
+
+sm.add_widget(Auth_1(name='auth_auth'))
+sm.add_widget(AuthFunctions_1(name='auth1'))
+sm.add_widget(AuthFunctions_GetUser_1(name='auth_getuser1'))
+
+
+#Creating the App to be run
+class TestApp(App):
+    def build(self):
+        return sm
+        
+#Running the App
+if __name__=="__main__":
+    TestApp().run()

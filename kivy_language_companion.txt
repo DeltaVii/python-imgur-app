@@ -20,3 +20,10 @@ This screen contains the TextInput that the links are put into. It needs to be a
 
 Auth_1
 This is where the user will authenticate their imgur account with the client. They press a button that opens a browser window where they log in and get a pin. The pin is pasted into the TextInput, and then they press the other button to validate and move on to the next screen.
+
+AuthFunctions_1
+Where the users choose which function to use
+
+AuthFunctions_GetUser_1
+Originally this was going to be split into three screens but there were too many issues with the variables.
+In this function, the user can input an Imgur username and get some info about their account.
