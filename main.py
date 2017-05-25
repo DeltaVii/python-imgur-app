@@ -143,14 +143,14 @@ Builder.load_string("""
         TextInput:
             id: ti
             multiline: 'false'
-            text: 'paste pin here, then press enter'
+            text: 'paste pin here'
             on_text_validate: root.auth(ti.text)
         Button:
             text: 'Click here to open window and log in to imgur'
             on_press: root.open_window()
 
         Button:
-            text: 'press me for auth because bleeehhh'
+            text: 'press me after pasting the pin to authorize'
             on_press: root.auth(ti.text)
             on_press: root.manager.current = 'auth1'
 
